@@ -34,6 +34,11 @@ function isBoardFull(board) {
   return board.every((c) => c !== null && c !== '')
 }
 
+// Map game values to chess symbols and CSS classes
+const markToSymbol = (value) => (value === 'X' ? '♞' : value === 'O' ? '♛' : '')
+const markToClass = (value) =>
+  value === 'X' ? 'mark-x' : value === 'O' ? 'mark-o' : ''
+
 // PUBLIC_INTERFACE
 export default function App() {
   /** Main TicTacToe application component. Renders the header, board, status, and controls. */
@@ -44,9 +49,15 @@ export default function App() {
   const draw = useMemo(() => !winner && isBoardFull(board), [winner, board])
 
   const statusText = useMemo(() => {
-    if (winner) return `${winner} wins!`
+    const nextSymbol = xIsNext ? '♞' : '♛'
+    if (winner) {
+      const winnerSymbol = markToSymbol(winner)
+      const winnerName = winner === 'X' ? 'Knight' : 'Queen'
+      return `${winnerSymbol} ${winnerName} wins!`
+    }
     if (draw) return 'Draw!'
-    return `Player ${xIsNext ? 'X' : 'O'} turn`
+    const nextName = xIsNext ? 'Knight' : 'Queen'
+    return `Player ${nextName} (${nextSymbol}) turn`
   }, [winner, draw, xIsNext])
 
   function handleCellClick(index) {
@@ -71,6 +82,26 @@ export default function App() {
     setXIsNext(true)
   }
 
+  // Determine winning line to optionally highlight cells
+  const winningLine = useMemo(() => {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ]
+    for (const [a, b, c] of lines) {
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return [a, b, c]
+      }
+    }
+    return null
+  }, [board])
+
   return (
     <div className="app-root">
       <header className="app-header">
@@ -92,23 +123,29 @@ export default function App() {
           <div className="board" role="grid" aria-label="TicTacToe board">
             {board.map((value, i) => {
               const isInteractive = !value && !winner
+              const isWinningCell =
+                Array.isArray(winningLine) && winningLine.includes(i)
+              const ariaCellContent = value
+                ? (value === 'X' ? 'Knight' : 'Queen')
+                : (xIsNext ? 'Knight' : 'Queen')
+
               return (
                 <button
                   key={i}
                   type="button"
                   role="gridcell"
-                  className={`cell ${value ? 'filled' : ''}`}
+                  className={`cell ${value ? 'filled' : ''} ${isWinningCell ? 'cell-win' : ''}`}
                   aria-label={
                     value
-                      ? `Cell ${i + 1}, ${value}`
-                      : `Cell ${i + 1}, empty. Place ${xIsNext ? 'X' : 'O'}`
+                      ? `Cell ${i + 1}, ${ariaCellContent}`
+                      : `Cell ${i + 1}, empty. Place ${ariaCellContent}`
                   }
                   onClick={() => handleCellClick(i)}
                   onKeyDown={(e) => handleKeyDown(i, e)}
                   disabled={!isInteractive}
                 >
-                  <span className={`mark ${value === 'X' ? 'mark-x' : value === 'O' ? 'mark-o' : ''}`}>
-                    {value ?? ''}
+                  <span className={`mark ${markToClass(value)} ${isWinningCell ? 'mark-win' : ''}`}>
+                    {markToSymbol(value)}
                   </span>
                 </button>
               )

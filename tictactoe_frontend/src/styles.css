@@ -96,6 +96,11 @@ body {
   color: var(--color-text);
 }
 
+/* Additional status variants keep consistent styling */
+.status-turn {
+  border: 1px dashed rgba(37,99,235,0.25);
+}
+
 .status-win {
   background: linear-gradient(180deg, rgba(245,158,11,0.16), rgba(243,244,246,0.5));
   color: var(--color-text);
@@ -154,18 +159,35 @@ body {
   font-size: clamp(2.8rem, 12vw, 4.2rem);
   font-weight: 800;
   letter-spacing: 1px;
-  transition: color var(--transition), transform var(--transition);
+  transition: color var(--transition), transform var(--transition), text-shadow var(--transition);
   transform: translateZ(0);
+  line-height: 1;
 }
 
+/* Knight (X) */
 .mark-x {
   color: var(--color-primary);
   text-shadow: 0 8px 22px rgba(37, 99, 235, 0.25);
 }
 
+/* Queen (O) */
 .mark-o {
   color: var(--color-secondary);
   text-shadow: 0 8px 22px rgba(245, 158, 11, 0.25);
+}
+
+/* Winning emphasis */
+.cell-win {
+  border-color: rgba(245, 158, 11, 0.75);
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.35), inset 0 0 0 2px rgba(245,158,11,0.25);
+  background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(249,250,251,0.95));
+}
+
+.mark-win {
+  transform: scale(1.06);
+  text-shadow:
+    0 10px 28px rgba(245, 158, 11, 0.38),
+    0 2px 8px rgba(0,0,0,0.08);
 }
 
 /* Controls */
