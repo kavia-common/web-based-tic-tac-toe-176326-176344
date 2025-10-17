@@ -1,0 +1,4 @@
+{
+    "command": "npm run dev -- --port <port> --host <host>",
+    "working_directory": "/home/kavia/workspace/code-generation/web-based-tic-tac-toe-176326-176344/tictactoe_frontend"
+}
